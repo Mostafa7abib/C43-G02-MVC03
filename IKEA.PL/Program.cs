@@ -1,4 +1,5 @@
 using IKEA.DAL.Presistance.Data;
+using IKEA.DAL.Presistance.Repositries.Departments;
 using Microsoft.EntityFrameworkCore;
 
 namespace IKEA.PL
@@ -16,6 +17,7 @@ namespace IKEA.PL
             {
                 optionBuilder.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             }));
+            builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
             #endregion
 
 
