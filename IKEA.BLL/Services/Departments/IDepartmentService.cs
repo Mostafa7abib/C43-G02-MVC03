@@ -8,7 +8,7 @@ using IKEA.DAL.Models.Departments;
 
 namespace IKEA.BLL.Services.Departments
 {
-    internal interface IDepartmentService
+    public interface IDepartmentService
     {
         IEnumerable<DepartmentToReturnDto> GetAllDepartments();
         DepartmentsDetailsReturnDto? GetDepartmentsById(int id);

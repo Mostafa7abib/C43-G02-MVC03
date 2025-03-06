@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace IKEA.BLL.Models.Departments
 {
-    internal class DepartmentToReturnDto
+    public class DepartmentToReturnDto
     {
         public string Name { get; set; } = null!; //to make it don't accept null 
         public string Code { get; set; } = null!; //to make it don't accept null
-        public string? Description { get; set; }
+        //public string? Description { get; set; }
         public DateOnly CreationDate { get; set; }
         public int Id { get; set; }
         //public int CreatedBy { get; set; }

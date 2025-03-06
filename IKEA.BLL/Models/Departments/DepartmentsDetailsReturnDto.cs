@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace IKEA.BLL.Models.Departments
 {
-    internal class DepartmentsDetailsReturnDto
+    public class DepartmentsDetailsReturnDto
     {
         public string Name { get; set; } = null!; //to make it don't accept null 
         public string Code { get; set; } = null!; //to make it don't accept null

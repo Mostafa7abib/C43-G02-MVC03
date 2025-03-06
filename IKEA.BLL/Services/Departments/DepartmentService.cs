@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace IKEA.BLL.Services.Departments
 {
-    internal class DepartmentService : IDepartmentService
+    public class DepartmentService : IDepartmentService
     {
         private readonly IDepartmentRepository _departmentRepositoryRebo;
 
@@ -26,7 +26,7 @@ namespace IKEA.BLL.Services.Departments
                     Id /*Of Dto*/ = D.Id /*Of DB*/,
                     Code = D.Code,
                     Name = D.Name,
-                    Description = D.Description,
+                    //Description = D.Description,
                     CreationDate = D.CreationDate,
                 }).AsNoTracking().ToList();
             return departments; ;
