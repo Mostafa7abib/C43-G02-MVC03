@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using IKEA.DAL.Models.Departments;
+using IKEA.DAL.Models.Employees;
 using Microsoft.EntityFrameworkCore;
 
 namespace IKEA.DAL.Presistance.Data
@@ -23,6 +24,7 @@ namespace IKEA.DAL.Presistance.Data
 
         #region DbSets
         public DbSet<Department> Departments { get; set; }
+        public DbSet<Employee> Employees { get; set; }
         #endregion
     }
 }
