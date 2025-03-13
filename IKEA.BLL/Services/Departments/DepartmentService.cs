@@ -20,7 +20,7 @@ namespace IKEA.BLL.Services.Departments
         }
         public IEnumerable<DepartmentToReturnDto> GetAllDepartments()
         {
-            var departments = _departmentRepositoryRebo.GetAllAsQuerable()
+            var departments = _departmentRepositoryRebo.GetAllAsQuerable().Where(D => !D.IsDeleted)
                 .Select(D => new DepartmentToReturnDto
                 {
                     Id /*Of Dto*/ = D.Id /*Of DB*/,

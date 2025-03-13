@@ -3,7 +3,7 @@ using IKEA.BLL.Services.Departments;
 using IKEA.PL.Models.Departments;
 using Microsoft.AspNetCore.Mvc;
 
-namespace IKEA.PL.Controllers
+namespace IKEA.PL.Controllers.Departments
 {
     public class DepartmentController : Controller
     {
@@ -11,9 +11,6 @@ namespace IKEA.PL.Controllers
         private readonly IDepartmentService _departmentService;
         private readonly ILogger<DepartmentController> _Logger;
         private readonly IWebHostEnvironment _environment;
-
-
-
         public DepartmentController(IDepartmentService departmentService, ILogger<DepartmentController> logger, IWebHostEnvironment environment)
         {
             _departmentService = departmentService;
@@ -40,6 +37,7 @@ namespace IKEA.PL.Controllers
         #endregion
         #region Post
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Create(CreatedDepartmentDto department)
         {
             if (!ModelState.IsValid)
@@ -78,7 +76,7 @@ namespace IKEA.PL.Controllers
         #endregion
         #endregion
         #region Details
-        [HttpGet] 
+        [HttpGet]
         public IActionResult Details(int? id)
         {
             if (id == null)
@@ -94,7 +92,7 @@ namespace IKEA.PL.Controllers
         [HttpGet]
         public IActionResult Edit(int? id)
         {
-            if(id == null)
+            if (id == null)
                 return BadRequest();
             var department = _departmentService.GetDepartmentsById(id.Value);
             if (department == null)
@@ -112,6 +110,7 @@ namespace IKEA.PL.Controllers
         #endregion
         #region Post
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Edit(int id, DepartmentEditVM VM)
         {
             if (!ModelState.IsValid)
@@ -144,7 +143,7 @@ namespace IKEA.PL.Controllers
                 _Logger.LogError(ex, ex.Message);
                 message = _environment.IsDevelopment() ? ex.Message : "Sorry! An Error Occured While Updating";
             }
-            ModelState.AddModelError(string.Empty, message);    
+            ModelState.AddModelError(string.Empty, message);
             return View(VM);
         }
         #endregion
@@ -164,6 +163,7 @@ namespace IKEA.PL.Controllers
         #endregion
         #region Post
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Delete(int id)
         {
             var message = string.Empty;

@@ -21,9 +21,9 @@ namespace IKEA.DAL.Presistance.Repositries._Generic
         {
             if (WithNoTracking)
             {
-                return _DbContext.Set<T>().AsNoTracking().ToList();
+                return _DbContext.Set<T>().Where(X=>!X.IsDeleted).AsNoTracking().ToList();
             }
-            return _DbContext.Set<T>().ToList();
+            return _DbContext.Set<T>().Where(X => !X.IsDeleted).ToList();
         }
 
         public T? GetById(int id)
@@ -51,7 +51,8 @@ namespace IKEA.DAL.Presistance.Repositries._Generic
 
         public int Delete(T entity)
         {
-            _DbContext.Set<T>().Remove(entity);
+            entity.IsDeleted = true;
+            _DbContext.Set<T>().Update(entity);
             return _DbContext.SaveChanges();
         }
     }
