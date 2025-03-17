@@ -14,6 +14,7 @@ namespace IKEA.PL.Controllers.Employees
         private readonly IEmployeeService _emloyeeService;
         private readonly ILogger<EmployeeController> _Logger;
         private readonly IWebHostEnvironment _environment;
+
         public EmployeeController(IEmployeeService employeeService, ILogger<EmployeeController> logger, IWebHostEnvironment environment)
         {
             _emloyeeService = employeeService;
@@ -23,9 +24,11 @@ namespace IKEA.PL.Controllers.Employees
         #endregion
         #region Index
         [HttpGet] // Employee/Index [URL]
-        public IActionResult Index()
+        public IActionResult Index(string search)
         {
-            var employees = _emloyeeService.GetAllEmployees();
+            ViewData["Message"] = "Hello In The Employees Page";
+            ViewBag.Message = "Hello In The Employees Page[ViewBag]";
+            var employees = _emloyeeService.GetEmployees(search);
             return View(employees);
         }
         #endregion
@@ -50,11 +53,13 @@ namespace IKEA.PL.Controllers.Employees
                 var D = _emloyeeService.CreateEmployee(employee);
                 if (D > 0)
                 {
+                    TempData["Message"] = "The Employee Has Been Created Successfully";
                     return RedirectToAction(nameof(Index));
                 }
                 else
                 {
-                    message = "Sorry! The Employee Hasn't Been Added";
+                    TempData["Message"] = "Sorry! The Department Hasn't Been Created";
+                    message = "Sorry! The Employee Hasn't Been Created";
                     ModelState.AddModelError(string.Empty, message);
                     return View(employee);
                 }
@@ -92,13 +97,14 @@ namespace IKEA.PL.Controllers.Employees
         #region Edit
         #region Get
         [HttpGet]
-        public IActionResult Edit(int? id)
+        public IActionResult Edit(int? id, [FromServices] IDepartmentService departmentService)
         {
             if (id == null)
                 return BadRequest();
             var employee = _emloyeeService.GetEmployeeById(id.Value);
             if (employee == null)
                 return NotFound();
+            ViewData["Departments"] = departmentService.GetAllDepartments();
             var viewModel = new UpdatedEmployeeDto()
             {
                 Name = employee.Name,
@@ -128,10 +134,12 @@ namespace IKEA.PL.Controllers.Employees
                 var D = _emloyeeService.UpdateEmployee(Updated);
                 if (D > 0)
                 {
+                    TempData["Message"] = "The Employee Has Been Updated Successfully";
                     return RedirectToAction(nameof(Index));
                 }
                 else
                 {
+                    TempData["Message"] = "Sorry! The Employee Hasn't Been Updated";
                     message = "Sorry! An Error Occured While Updating";
                     ModelState.AddModelError(string.Empty, message);
                     return View(Updated);
@@ -159,10 +167,12 @@ namespace IKEA.PL.Controllers.Employees
                 var D = _emloyeeService.DeleteEmployee(id);
                 if (D)
                 {
+                    TempData["Message"] = "The Employee Has Been Deleted Successfully";
                     return RedirectToAction(nameof(Index));
                 }
                 else
                 {
+                    TempData["Message"] = "Sorry! The Employee Hasn't Been Deleted";
                     message = "Sorry! An Error Occured While Deleting";
                     ModelState.AddModelError(string.Empty, message);
                     return View();

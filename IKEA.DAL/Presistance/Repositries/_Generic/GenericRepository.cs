@@ -37,23 +37,20 @@ namespace IKEA.DAL.Presistance.Repositries._Generic
             return _DbContext.Set<T>();
         }
 
-        public int Add(T entity)
+        public void Add(T entity)
         {
             _DbContext.Set<T>().Add(entity);
-            return _DbContext.SaveChanges();
         }
 
-        public int Update(T entity)
+        public void Update(T entity)
         {
             _DbContext.Set<T>().Update(entity);
-            return _DbContext.SaveChanges();
         }
 
-        public int Delete(T entity)
+        public void Delete(T entity)
         {
             entity.IsDeleted = true;
             _DbContext.Set<T>().Update(entity);
-            return _DbContext.SaveChanges();
         }
     }
 }

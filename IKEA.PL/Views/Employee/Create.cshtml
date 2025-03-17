@@ -1,7 +1,10 @@
-﻿@using IKEA.DAL.Common.Enums
+﻿
+@using IKEA.DAL.Common.Enums
 @model CreatedEmployeeDto
+@inject IDepartmentService departmentService
 @{
 	ViewData["Title"] = "Create New Employee";
+	var Departments = new SelectList(departmentService.GetAllDepartments(), nameof(DepartmentsDetailsReturnDto.Id), nameof(DepartmentsDetailsReturnDto.Name));
 }
 
 <!DOCTYPE html>
@@ -79,12 +82,12 @@
 					<div asp-validation-summary="ModelOnly"></div>
 					<div class="mb-3">
 						<label class="form-label" asp-for="Name">Name</label>
-						<input asp-for="Name" class="form-control" placeholder="Enter Employee Name" />
+						<input asp-for="Name" class="form-control" />
 						<span asp-validation-for="Name" class="text-danger"></span>
 					</div>
 					<div class="mb-3">
 						<label class="form-label" asp-for="Email">E-Mail</label>
-						<input asp-for="Email" class="form-control" placeholder="Enter Employee E-Mail" />
+						<input asp-for="Email" class="form-control" />
 						<span asp-validation-for="Email" class="text-danger"></span>
 					</div>
 					<div class="form-group mb-1">
@@ -111,6 +114,13 @@
 						<label class="form-label" asp-for="PhoneNumber">Phone Number</label>
 						<input asp-for="PhoneNumber" class="form-control" />
 						<span asp-validation-for="PhoneNumber" class="text-danger"></span>
+					</div>
+					<div class="form-group col-6 mb-3">
+						<label class="control-label mb-2" asp-for="DepartmentId">Department</label>
+						<select asp-for="DepartmentId" asp-items="@Departments" class="form-control">
+							<option value="@null"> Select Department....</option>
+						</select>
+						<span asp-validation-for="DepartmentId" class="text-danger"></span>
 					</div>
 					<div class="form-group col-6">
 						<label class="control-label mb-2" asp-for="EmployeeType">Employee Type</label>

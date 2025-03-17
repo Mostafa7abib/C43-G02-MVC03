@@ -1,18 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using IKEA.DAL.Common.Enums;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using IKEA.DAL.Common.Enums;
 
-namespace IKEA.BLL.Models.Employees
+namespace IKEA.PL.Models.Departments
 {
-    // To Update Employee
-    public class UpdatedEmployeeDto
+    public class EmployeeEditVM
     {
-        public int Id { get; set; } 
-
         [MaxLength(50, ErrorMessage = "Max Length Of Name Is 50 Chars")]
         [MinLength(5, ErrorMessage = "Min Length Of Name Is 5 Chars")]
         public string Name { get; set; } = null!;
@@ -33,6 +25,7 @@ namespace IKEA.BLL.Models.Employees
         public DateTime HiringDate { get; set; }
         public Gender Gender { get; set; }
         public EmployeeType EmployeeType { get; set; }
-        public int? DepartmentId { get; internal set; }
+        [Display(Name = "Department")]
+        public int? DepartmentId { get; set; }
     }
 }

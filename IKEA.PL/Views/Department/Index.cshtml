@@ -1,7 +1,48 @@
 ﻿@model IEnumerable<DepartmentToReturnDto>
 @{
-    ViewData["Title"] = "Index";
+    // ViewData["Title"] = "Index";
+    // // Compiler Can Enforce The Type Safety
+    // string? ViewDataMessage = ViewData["Message"] as string; //Faster Than ViewBag
+    // //Compiler Will Escape Type Checking At Comilation Time
+    // string ViewBagMessage = ViewBag.Message;
 }
+
+@if (!string.IsNullOrEmpty(TempData["Message"] as string))
+{
+    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTi-xgE1vyBhDJQJNdJKhVjmraoRqSsBYiFHg&s" class="rounded me-2" width="30" height="30" alt="Success">
+                    <h5 class="modal-title text-success" id="modalLabel">Success!!</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    @TempData["Message"]
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+@*         Trigger the modal to show on page load
+ *@        document.addEventListener('DOMContentLoaded', function () {
+            let modal = new bootstrap.Modal(document.getElementById('successModal'));
+            modal.show();
+        });
+    </script>
+}
+
+@* <div class="alert alert-info">
+	@ViewData["Message"]
+</div>
+
+<div class="alert alert-info">
+	@ViewBag.Message
+</div> *@
 
 <h1>All Departments</h1>
 <br />
@@ -29,6 +70,11 @@
                     <td>@department.Name</td>
                     <td>@department.CreationDate</td>
                     <partial name="_ButtonsPartial" model="@department.Id"/>
+                    <td>
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#@modalId">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </td>
                 </tr>
                 <!-- Modal -->
                 <div class="modal fade" id="@modalId" tabindex="-1" aria-labelledby="exampleModalLabel_@department.Id" aria-hidden="true">

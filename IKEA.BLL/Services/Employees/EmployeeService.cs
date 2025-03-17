@@ -6,20 +6,24 @@ using System.Threading.Tasks;
 using IKEA.BLL.Models.Employees;
 using IKEA.DAL.Models.Employees;
 using IKEA.DAL.Presistance.Repositries.Employees;
+using IKEA.DAL.Presistance.UnitOfWork;
+using Microsoft.EntityFrameworkCore;
 
 namespace IKEA.BLL.Services.Employees
 {
     public class EmployeeService : IEmployeeService
     {
-        private readonly IEmployeeRepository _employeeRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public EmployeeService(IEmployeeRepository employeeRepository)
+        public EmployeeService(IUnitOfWork unitOfWork)
         {
-            _employeeRepository = employeeRepository;
+            _unitOfWork = unitOfWork;
         }
-        public IEnumerable<EmployeeDto> GetAllEmployees()
+        public IEnumerable<EmployeeDto> GetEmployees(string search)
         {
-            return _employeeRepository.GetAllAsQuerable().Where(E=>!E.IsDeleted).Select(employee => new EmployeeDto
+            return _unitOfWork.EmployeeRepository.GetAllAsQuerable().Where(E => !E.IsDeleted &&(string.IsNullOrEmpty(search) || E.Name.ToLower().Contains(search.ToLower())))
+                .Include(e=>e.Department)
+                .Select(employee => new EmployeeDto
             {
                 Id = employee.Id,
                 Name = employee.Name,
@@ -28,13 +32,14 @@ namespace IKEA.BLL.Services.Employees
                 IsActive = employee.IsActive,
                 Email = employee.Email,
                 Gender = employee.Gender.ToString(),
-                EmployeeType = employee.EmployeeType.ToString()
-            });
+                EmployeeType = employee.EmployeeType.ToString(),
+                Department = employee.Department.Name
+            }).ToList();
         }
 
         public EmployeeDetailsDto? GetEmployeeById(int id)
         {
-            var employee = _employeeRepository.GetById(id);
+            var employee = _unitOfWork.EmployeeRepository.GetById(id);
             if (employee is { })
                 return new EmployeeDetailsDto
                 {
@@ -48,7 +53,8 @@ namespace IKEA.BLL.Services.Employees
                     PhoneNumber = employee.Phone,
                     HiringDate = employee.Hiring_Date,
                     Gender = employee.Gender,
-                    EmployeeType = employee.EmployeeType
+                    EmployeeType = employee.EmployeeType,
+                    Department = employee.Department.Name,
                 };
             return null;
         }
@@ -66,11 +72,14 @@ namespace IKEA.BLL.Services.Employees
                 Hiring_Date = employeeDto.HiringDate,
                 Gender = employeeDto.Gender,
                 EmployeeType = employeeDto.EmployeeType,
+                DepartmentId = employeeDto.DepartmentId,
                 CreatedBy = 1,
                 LastModificationBy = 1,
-                LastModificationOn = DateTime.UtcNow
+                LastModificationOn = DateTime.UtcNow,
+                
             };
-            return _employeeRepository.Add(employee);
+             _unitOfWork.EmployeeRepository.Add(employee);
+            return _unitOfWork.Complete();
         }
 
         public int UpdateEmployee(UpdatedEmployeeDto employeeDto)
@@ -87,22 +96,25 @@ namespace IKEA.BLL.Services.Employees
                 Phone = employeeDto.PhoneNumber,
                 Hiring_Date = employeeDto.HiringDate,
                 Gender = employeeDto.Gender,
+                DepartmentId = employeeDto.DepartmentId,
                 EmployeeType = employeeDto.EmployeeType,
                 CreatedBy = 1,
                 LastModificationBy = 1,
                 LastModificationOn = DateTime.UtcNow
             };
-            return _employeeRepository.Update(employee);
+             _unitOfWork.EmployeeRepository.Update(employee);
+            return _unitOfWork.Complete();
         }
 
         public bool DeleteEmployee(int id)
         {
-            var employee = _employeeRepository.GetById(id);
+            var employRepo = _unitOfWork.EmployeeRepository;
+            var employee = employRepo.GetById(id);
             if (employee is { })
             {
-                return _employeeRepository.Delete(employee) > 0;
+                 employRepo.Delete(employee);
             }
-            return false;
+            return _unitOfWork.Complete() > 0;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using IKEA.BLL.Models.Departments;
+﻿using AutoMapper;
+using IKEA.BLL.Models.Departments;
 using IKEA.BLL.Services.Departments;
 using IKEA.PL.Models.Departments;
 using Microsoft.AspNetCore.Mvc;
@@ -11,11 +12,14 @@ namespace IKEA.PL.Controllers.Departments
         private readonly IDepartmentService _departmentService;
         private readonly ILogger<DepartmentController> _Logger;
         private readonly IWebHostEnvironment _environment;
-        public DepartmentController(IDepartmentService departmentService, ILogger<DepartmentController> logger, IWebHostEnvironment environment)
+        private readonly IMapper _mapper;
+
+        public DepartmentController(IDepartmentService departmentService, ILogger<DepartmentController> logger, IWebHostEnvironment environment,IMapper mapper)
         {
             _departmentService = departmentService;
             _Logger = logger;
             _environment = environment;
+            _mapper = mapper;
         }
         #endregion
         #region Index
@@ -23,6 +27,8 @@ namespace IKEA.PL.Controllers.Departments
         // Department/Index will be the URL
         public IActionResult Index()
         {
+            ViewData["Message"] = "Hello In The Departments Page";
+            ViewBag.Message = "Hello In The Departments Page[ViewBag]";
             var Departments = _departmentService.GetAllDepartments();
             return View(Departments);
         }
@@ -38,23 +44,33 @@ namespace IKEA.PL.Controllers.Departments
         #region Post
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(CreatedDepartmentDto department)
+        public IActionResult Create(DepartmentEditVM departmentVM)
         {
             if (!ModelState.IsValid)
-                return View(department);
+                return View(departmentVM);
             var message = string.Empty;
             try
             {
-                var D = _departmentService.CreateDepartment(department);
+                //var D = _departmentService.CreateDepartment(new CreatedDepartmentDto()
+                //{
+                //    Code = department.Code,
+                //    Name = department.Name,
+                //    Description = department.Description,
+                //    CreationDate = department.CreationDate
+                //});
+                var createdDepartment = _mapper.Map<CreatedDepartmentDto>(departmentVM);
+                var D = _departmentService.CreateDepartment(createdDepartment);
                 if (D > 0)
                 {
+                    TempData["Message"]= "The Department Has Been Created Successfully";
                     return RedirectToAction(nameof(Index));
                 }
                 else
                 {
-                    message = "Sorry! The Department Hasn't Been Added";
+                    TempData["Message"] = "Sorry! The Department Hasn't Been Created";
+                    message = "Sorry! The Department Hasn't Been Created";
                     ModelState.AddModelError(string.Empty, message);
-                    return View(department);
+                    return View(departmentVM);
                 }
             }
             catch (Exception ex)
@@ -63,11 +79,11 @@ namespace IKEA.PL.Controllers.Departments
                 if (_environment.IsDevelopment())
                 {
                     message = ex.Message;
-                    return View(department);
+                    return View(departmentVM);
                 }
                 else
                 {
-                    message = "Sorry! The Department Hasn't Been Added";
+                    message = "Sorry! The Department Hasn't Been Created";
                     return View("Error", message);
 
                 }
@@ -97,15 +113,8 @@ namespace IKEA.PL.Controllers.Departments
             var department = _departmentService.GetDepartmentsById(id.Value);
             if (department == null)
                 return NotFound();
-            var viewModel = new DepartmentEditVM()
-            {
-                Id = department.Id,
-                Code = department.Code,
-                Name = department.Name,
-                Description = department.Description,
-                CreationDate = department.CreationDate
-            };
-            return View(viewModel);
+            var departmentVM = _mapper.Map<DepartmentsDetailsReturnDto,DepartmentEditVM>(department);
+            return View(departmentVM);
         }
         #endregion
         #region Post
@@ -118,21 +127,24 @@ namespace IKEA.PL.Controllers.Departments
             var message = string.Empty;
             try
             {
-                var updatedDepartment = new UpdateDepartmentDto()
-                {
-                    Id = id,
-                    Code = VM.Code,
-                    Name = VM.Name,
-                    Description = VM.Description,
-                    CreationDate = VM.CreationDate
-                };
+                //var updatedDepartment = new UpdateDepartmentDto()
+                //{
+                //    Id = id,
+                //    Code = VM.Code,
+                //    Name = VM.Name,
+                //    Description = VM.Description,
+                //    CreationDate = VM.CreationDate
+                //};
+                var updatedDepartment = _mapper.Map< UpdateDepartmentDto>(VM);
                 var D = _departmentService.UpdateDepartmet(updatedDepartment);
                 if (D > 0)
                 {
+                    TempData["Message"] = "The Department Has Been Updated Successfully";
                     return RedirectToAction(nameof(Index));
                 }
                 else
                 {
+                    TempData["Message"] = "Sorry! The Department Hasn't Been Updated";
                     message = "Sorry! An Error Occured While Updating";
                     ModelState.AddModelError(string.Empty, message);
                     return View(VM);
@@ -172,10 +184,12 @@ namespace IKEA.PL.Controllers.Departments
                 var D = _departmentService.DeleteDepartment(id);
                 if (D)
                 {
+                    TempData["Message"] = "The Department Has Been Deleted Successfully";
                     return RedirectToAction(nameof(Index));
                 }
                 else
                 {
+                    TempData["Message"] = "Sorry! The Department Hasn't Been Deleted";
                     message = "Sorry! An Error Occured While Deleting";
                     ModelState.AddModelError(string.Empty, message);
                     return View();

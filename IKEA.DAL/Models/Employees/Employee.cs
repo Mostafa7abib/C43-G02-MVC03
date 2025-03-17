@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using IKEA.DAL.Common.Enums;
+using IKEA.DAL.Models.Departments;
 
 namespace IKEA.DAL.Models.Employees
 {
@@ -18,6 +19,12 @@ namespace IKEA.DAL.Models.Employees
         public string? Phone { get; set; }
         public DateTime Hiring_Date { get; set; }
         public Gender Gender { get; set; }
-        public EmployeeType EmployeeType { get; set; }  
+        public EmployeeType EmployeeType { get; set; }
+
+        #region Department
+        public int? DepartmentId { get; set; }
+        //Navigational Property [one]
+        public virtual Department? Department { get; set; }
+        #endregion
     }
 }
