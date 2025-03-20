@@ -1,0 +1,11 @@
+﻿
+@model CreatedDepartmentDto
+@{
+    ViewData["Title"] = "Create New Department";
+	ViewBag.Action = "Create";
+}
+<partial name="partials/CreateEditDepartmentPartial" />
+@section ValidationScript
+{
+    <partial name="_ValidationScriptsPartial" />
+}

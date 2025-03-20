@@ -1,0 +1,89 @@
+﻿@model CreatedEmployeeDto
+@{
+	ViewData["Title"] = "Create New Employee";
+	ViewBag.Action = "Create";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>@ViewData["Title"]</title>
+	<link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
+	<style>
+		body {
+			background-color: #f4f6f9;
+			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+		}
+
+		.form-container {
+			background-color: #ffffff;
+			padding: 40px;
+			border-radius: 20px;
+			box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+			margin-top: 50px;
+			margin-bottom: 50px;
+		}
+
+		.form-title {
+			color: #007bff;
+			margin-bottom: 30px;
+			text-shadow: 2px 2px 4px #aaa;
+		}
+
+		.form-label {
+			color: #495057;
+			font-weight: bold;
+		}
+
+		.form-control {
+			border: 2px solid #ced4da;
+			border-radius: 10px;
+			transition: border-color 0.3s ease-in-out;
+		}
+
+			.form-control:focus {
+				border-color: #007bff;
+				box-shadow: none;
+			}
+
+		.btn-primary {
+			background-color: #007bff;
+			border-color: #007bff;
+			border-radius: 10px;
+			transition: background-color 0.3s ease-in-out;
+		}
+
+			.btn-primary:hover {
+				background-color: #0056b3;
+			}
+
+		.btn-secondary {
+			background-color: #6c757d;
+			border-color: #6c757d;
+			border-radius: 10px;
+		}
+
+			.btn-secondary:hover {
+				background-color: #5a6268;
+			}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<div class="row justify-content-center">
+			<div class="col-md-8 form-container">
+				<h1 class="text-center form-title">Create New Employee</h1>
+				<partial name="Partials/CreateEditEmployeePartial"/>
+			</div>
+		</div>
+	</div>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+@section ValidationScript
+{
+	<partial name="_ValidationScriptsPartial" />
+}
