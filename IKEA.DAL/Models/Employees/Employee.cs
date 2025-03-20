@@ -26,5 +26,6 @@ namespace IKEA.DAL.Models.Employees
         //Navigational Property [one]
         public virtual Department? Department { get; set; }
         #endregion
+        public string? Image { get; set; }
     }
 }

@@ -1,0 +1,37 @@
+﻿@model LoginVM
+@{
+    ViewData["Title"] = "Login";
+    Layout = "~/Views/Shared/_Auth_Layout.cshtml";
+}
+
+
+<div class="wrapper">
+    <h2>LogIn</h2>
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <form asp-action="Login">
+        <div class="input-field">
+            <input type="email" id="email" asp-for="Email" placeholder="E-mail" required>
+            <i class='bx bxs-user'></i>
+        </div>
+        <div class="input-field">
+            <input type="password" id="password" asp-for="Password" placeholder="Password" required>
+            <i class='bx bxs-lock-alt'></i>
+        </div>
+        <div class="forget">
+            <label class="forget">
+                <input asp-for="RememberMe" class="checkbox">
+                <span> Remember Me </span>
+            </label>
+        </div>
+        <a asp-action="#" class="forget">
+            <p>Forget Password</p>
+        </a>
+        <input type="submit" class="login"></input>
+        <p class="forget">Don't have an account? <a asp-action="Register" class="sign-up">Sign Up</a>.</p>
+    </form>
+</div>
+
+@section ValidationScript
+{
+    <partial name="_ValidationScriptsPartial"/>
+}

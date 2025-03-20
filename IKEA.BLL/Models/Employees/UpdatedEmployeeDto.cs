@@ -5,10 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using IKEA.DAL.Common.Enums;
+using Microsoft.AspNetCore.Http;
 
 namespace IKEA.BLL.Models.Employees
 {
-    // To Update Employee
     public class UpdatedEmployeeDto
     {
         public int Id { get; set; } 
@@ -34,5 +34,6 @@ namespace IKEA.BLL.Models.Employees
         public Gender Gender { get; set; }
         public EmployeeType EmployeeType { get; set; }
         public int? DepartmentId { get; internal set; }
+        public IFormFile? Image { get; set; }
     }
 }

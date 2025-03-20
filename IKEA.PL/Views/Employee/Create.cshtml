@@ -1,10 +1,7 @@
-﻿
-@using IKEA.DAL.Common.Enums
-@model CreatedEmployeeDto
-@inject IDepartmentService departmentService
+﻿@model CreatedEmployeeDto
 @{
 	ViewData["Title"] = "Create New Employee";
-	var Departments = new SelectList(departmentService.GetAllDepartments(), nameof(DepartmentsDetailsReturnDto.Id), nameof(DepartmentsDetailsReturnDto.Name));
+	ViewBag.Action = "Create";
 }
 
 <!DOCTYPE html>
@@ -78,79 +75,7 @@
 		<div class="row justify-content-center">
 			<div class="col-md-8 form-container">
 				<h1 class="text-center form-title">Create New Employee</h1>
-				<form asp-action="Create" method="post">
-					<div asp-validation-summary="ModelOnly"></div>
-					<div class="mb-3">
-						<label class="form-label" asp-for="Name">Name</label>
-						<input asp-for="Name" class="form-control" />
-						<span asp-validation-for="Name" class="text-danger"></span>
-					</div>
-					<div class="mb-3">
-						<label class="form-label" asp-for="Email">E-Mail</label>
-						<input asp-for="Email" class="form-control" />
-						<span asp-validation-for="Email" class="text-danger"></span>
-					</div>
-					<div class="form-group mb-1">
-						<label class="form-label" asp-for="Address">Address</label>
-						<input asp-for="Address" class="form-control" />
-						<span asp-validation-for="Address" class="text-danger"></span>
-					</div>
-					<div class="mb-3">
-						<label class="form-label" asp-for="Age">Age</label>
-						<input asp-for="Age" class="form-control" />
-						<span asp-validation-for="Age" class="text-danger"></span>
-					</div>
-					<div class="mb-3">
-						<label class="form-label" asp-for="Salary">Salary</label>
-						<input asp-for="Salary" class="form-control" />
-						<span asp-validation-for="Salary" class="text-danger"></span>
-					</div>
-					<div class="form-group mb-1">
-						<label class="form-label" asp-for="HiringDate">HiringDate</label>
-						<input asp-for="HiringDate" class="form-control" type="date" />
-						<span asp-validation-for="HiringDate" class="text-danger"></span>
-					</div>
-					<div class="mb-3">
-						<label class="form-label" asp-for="PhoneNumber">Phone Number</label>
-						<input asp-for="PhoneNumber" class="form-control" />
-						<span asp-validation-for="PhoneNumber" class="text-danger"></span>
-					</div>
-					<div class="form-group col-6 mb-3">
-						<label class="control-label mb-2" asp-for="DepartmentId">Department</label>
-						<select asp-for="DepartmentId" asp-items="@Departments" class="form-control">
-							<option value="@null"> Select Department....</option>
-						</select>
-						<span asp-validation-for="DepartmentId" class="text-danger"></span>
-					</div>
-					<div class="form-group col-6">
-						<label class="control-label mb-2" asp-for="EmployeeType">Employee Type</label>
-						<select asp-for="EmployeeType" asp-items="Html.GetEnumSelectList<EmployeeType>()" class="form-control">
-							<option value=""> Select Employee Type....</option>
-						</select>
-						<span asp-validation-for="EmployeeType" class="text-danger"></span>
-					</div>
-					<div class="form-group mb-1">
-						<label class="form-label" asp-for="Gender">Gender</label>
-						<br>
-						<div class="form-check-inline">
-							@foreach (Gender item in Enum.GetValues(typeof(Gender)))
-							{
-								<input asp-for="Gender" class="form-check-input" type="radio" value="@item" />
-								<label class="form-check-label">@item</label>
-							}
-						</div>
-					</div>
-					<span asp-validation-for="Gender" class="text-danger"></span>
-					<br />
-					<div class="form-group mb-3">
-						<input asp-for="IsActive" class="form-check-input" />
-						<label class="col-form-label" asp-for="IsActive"> Is Active</label>
-					</div>
-					<div class="mt-4 m-auto">
-						<input class="btn btn-primary" type="submit" value="Create" />
-						<a asp-action="Index" class="btn btn-dark">Back To List</a>
-					</div>
-				</form>
+				<partial name="Partials/CreateEditEmployeePartial"/>
 			</div>
 		</div>
 	</div>

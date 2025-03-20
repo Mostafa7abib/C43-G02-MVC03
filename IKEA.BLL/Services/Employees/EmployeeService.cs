@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using IKEA.BLL.Common.Services.AttachmentServices;
 using IKEA.BLL.Models.Employees;
 using IKEA.DAL.Models.Employees;
 using IKEA.DAL.Presistance.Repositries.Employees;
@@ -14,14 +15,16 @@ namespace IKEA.BLL.Services.Employees
     public class EmployeeService : IEmployeeService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IAttachmentService _attachmentService;
 
-        public EmployeeService(IUnitOfWork unitOfWork)
+        public EmployeeService(IUnitOfWork unitOfWork,IAttachmentService attachmentService)
         {
             _unitOfWork = unitOfWork;
+            _attachmentService = attachmentService;
         }
-        public IEnumerable<EmployeeDto> GetEmployees(string search)
+        public async Task<IEnumerable<EmployeeDto>> GetEmployeesAsync(string search)
         {
-            return _unitOfWork.EmployeeRepository.GetAllAsQuerable().Where(E => !E.IsDeleted &&(string.IsNullOrEmpty(search) || E.Name.ToLower().Contains(search.ToLower())))
+            return await _unitOfWork.EmployeeRepository.GetAllAsQuerable().Where(E => !E.IsDeleted &&(string.IsNullOrEmpty(search) || E.Name.ToLower().Contains(search.ToLower())))
                 .Include(e=>e.Department)
                 .Select(employee => new EmployeeDto
             {
@@ -34,13 +37,14 @@ namespace IKEA.BLL.Services.Employees
                 Gender = employee.Gender.ToString(),
                 EmployeeType = employee.EmployeeType.ToString(),
                 Department = employee.Department.Name
-            }).ToList();
+            }).ToListAsync();
         }
 
-        public EmployeeDetailsDto? GetEmployeeById(int id)
+        public async Task<EmployeeDetailsDto?> GetEmployeeByIdAsync(int id)
         {
-            var employee = _unitOfWork.EmployeeRepository.GetById(id);
+            var employee =await _unitOfWork.EmployeeRepository.GetByIdAsync(id);
             if (employee is { })
+            {
                 return new EmployeeDetailsDto
                 {
                     Id = employee.Id,
@@ -56,9 +60,10 @@ namespace IKEA.BLL.Services.Employees
                     EmployeeType = employee.EmployeeType,
                     Department = employee.Department.Name,
                 };
+            }
             return null;
         }
-        public int CreateEmployee(CreatedEmployeeDto employeeDto)
+        public async Task<int> CreateEmployeeAsync(CreatedEmployeeDto employeeDto)
         {
             var employee = new Employee
             {
@@ -78,11 +83,15 @@ namespace IKEA.BLL.Services.Employees
                 LastModificationOn = DateTime.UtcNow,
                 
             };
-             _unitOfWork.EmployeeRepository.Add(employee);
-            return _unitOfWork.Complete();
+            if(employeeDto.Image is { })
+            {
+                employee.Image = _attachmentService.Upload(employeeDto.Image,"imgs");
+            }
+                _unitOfWork.EmployeeRepository.Add(employee);
+            return await _unitOfWork.CompleteAsync();
         }
 
-        public int UpdateEmployee(UpdatedEmployeeDto employeeDto)
+        public async Task<int> UpdateEmployeeAsync(UpdatedEmployeeDto employeeDto)
         {
             var employee = new Employee
             {
@@ -103,18 +112,18 @@ namespace IKEA.BLL.Services.Employees
                 LastModificationOn = DateTime.UtcNow
             };
              _unitOfWork.EmployeeRepository.Update(employee);
-            return _unitOfWork.Complete();
+            return await _unitOfWork.CompleteAsync();
         }
 
-        public bool DeleteEmployee(int id)
+        public async Task<bool> DeleteEmployeeAsync(int id)
         {
             var employRepo = _unitOfWork.EmployeeRepository;
-            var employee = employRepo.GetById(id);
+            var employee =await employRepo.GetByIdAsync(id);
             if (employee is { })
             {
                  employRepo.Delete(employee);
             }
-            return _unitOfWork.Complete() > 0;
+            return await _unitOfWork.CompleteAsync() > 0;
         }
     }
 }

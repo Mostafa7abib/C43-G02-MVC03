@@ -1,34 +1,41 @@
-﻿using IKEA.BLL.Models.Departments;
+﻿using AutoMapper;
+using IKEA.BLL.Models.Departments;
 using IKEA.BLL.Models.Employees;
 using IKEA.BLL.Services.Departments;
 using IKEA.BLL.Services.Employees;
+using IKEA.DAL.Models.Departments;
 using IKEA.PL.Controllers.Departments;
 using IKEA.PL.Models.Departments;
+using IKEA.PL.Models.Employees;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IKEA.PL.Controllers.Employees
 {
+    [Authorize]
     public class EmployeeController : Controller
     {
         #region Services
         private readonly IEmployeeService _emloyeeService;
         private readonly ILogger<EmployeeController> _Logger;
         private readonly IWebHostEnvironment _environment;
+        private readonly IMapper _mapper;
 
-        public EmployeeController(IEmployeeService employeeService, ILogger<EmployeeController> logger, IWebHostEnvironment environment)
+        public EmployeeController(IEmployeeService employeeService, ILogger<EmployeeController> logger, IWebHostEnvironment environment,IMapper mapper)
         {
             _emloyeeService = employeeService;
             _Logger = logger;
             _environment = environment;
+            _mapper = mapper;
         }
         #endregion
         #region Index
         [HttpGet] // Employee/Index [URL]
-        public IActionResult Index(string search)
+        public async Task<IActionResult> Index(string search)
         {
             ViewData["Message"] = "Hello In The Employees Page";
             ViewBag.Message = "Hello In The Employees Page[ViewBag]";
-            var employees = _emloyeeService.GetEmployees(search);
+            var employees = await _emloyeeService.GetEmployeesAsync(search);
             return View(employees);
         }
         #endregion
@@ -43,14 +50,15 @@ namespace IKEA.PL.Controllers.Employees
         #region Post
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(CreatedEmployeeDto employee)
+        public async Task<IActionResult> Create(EmployeeEditVM employeeVM)
         {
             if (!ModelState.IsValid)
-                return View(employee);
+                return View(employeeVM);
             var message = string.Empty;
             try
             {
-                var D = _emloyeeService.CreateEmployee(employee);
+                var createdEmployee = _mapper.Map<CreatedEmployeeDto>(employeeVM);
+                var D = await _emloyeeService.CreateEmployeeAsync(createdEmployee);
                 if (D > 0)
                 {
                     TempData["Message"] = "The Employee Has Been Created Successfully";
@@ -61,7 +69,7 @@ namespace IKEA.PL.Controllers.Employees
                     TempData["Message"] = "Sorry! The Department Hasn't Been Created";
                     message = "Sorry! The Employee Hasn't Been Created";
                     ModelState.AddModelError(string.Empty, message);
-                    return View(employee);
+                    return View(employeeVM);
                 }
             }
             catch (Exception ex)
@@ -70,7 +78,7 @@ namespace IKEA.PL.Controllers.Employees
                 if (_environment.IsDevelopment())
                 {
                     message = ex.Message;
-                    return View(employee);
+                    return View(employeeVM);
                 }
                 else
                 {
@@ -84,11 +92,11 @@ namespace IKEA.PL.Controllers.Employees
         #endregion
         #region Details
         [HttpGet]
-        public IActionResult Details(int? id)
+        public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
                 return BadRequest();
-            var employee = _emloyeeService.GetEmployeeById(id.Value);
+            var employee =await _emloyeeService.GetEmployeeByIdAsync(id.Value);
             if (employee == null)
                 return NotFound();
             return View(employee);
@@ -97,41 +105,29 @@ namespace IKEA.PL.Controllers.Employees
         #region Edit
         #region Get
         [HttpGet]
-        public IActionResult Edit(int? id, [FromServices] IDepartmentService departmentService)
+        public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
                 return BadRequest();
-            var employee = _emloyeeService.GetEmployeeById(id.Value);
+            var employee =await _emloyeeService.GetEmployeeByIdAsync(id.Value);
             if (employee == null)
                 return NotFound();
-            ViewData["Departments"] = departmentService.GetAllDepartments();
-            var viewModel = new UpdatedEmployeeDto()
-            {
-                Name = employee.Name,
-                Address = employee.Address,
-                Email = employee.Email,
-                Age = employee.Age,
-                Salary = employee.Salary,
-                PhoneNumber = employee.PhoneNumber,
-                IsActive = employee.IsActive,
-                EmployeeType = employee.EmployeeType,
-                Gender = employee.Gender,
-                HiringDate = employee.HiringDate,   
-            };
-            return View(viewModel);
+            var employeeVM = _mapper.Map<EmployeeDetailsDto, EmployeeEditVM>(employee);
+            return View(employeeVM);
         }
         #endregion
         #region Post
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, UpdatedEmployeeDto Updated)
+        public async Task<IActionResult> Edit(int id, EmployeeEditVM VM)
         {
             if (!ModelState.IsValid)
-                return View(Updated);
+                return View(VM);
             var message = string.Empty;
             try
-            { 
-                var D = _emloyeeService.UpdateEmployee(Updated);
+            {
+                var updatedEmployee = _mapper.Map<UpdatedEmployeeDto>(VM);
+                var D = await _emloyeeService.UpdateEmployeeAsync(updatedEmployee);
                 if (D > 0)
                 {
                     TempData["Message"] = "The Employee Has Been Updated Successfully";
@@ -142,7 +138,7 @@ namespace IKEA.PL.Controllers.Employees
                     TempData["Message"] = "Sorry! The Employee Hasn't Been Updated";
                     message = "Sorry! An Error Occured While Updating";
                     ModelState.AddModelError(string.Empty, message);
-                    return View(Updated);
+                    return View(VM);
                 }
             }
             catch (Exception ex)
@@ -151,7 +147,7 @@ namespace IKEA.PL.Controllers.Employees
                 message = _environment.IsDevelopment() ? ex.Message : "Sorry! An Error Occured While Updating";
             }
             ModelState.AddModelError(string.Empty, message);
-            return View(Updated);
+            return View(VM);
         }
         #endregion
         #endregion
@@ -159,12 +155,12 @@ namespace IKEA.PL.Controllers.Employees
         #region Post
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             var message = string.Empty;
             try
             {
-                var D = _emloyeeService.DeleteEmployee(id);
+                var D = await _emloyeeService.DeleteEmployeeAsync(id);
                 if (D)
                 {
                     TempData["Message"] = "The Employee Has Been Deleted Successfully";

@@ -1,0 +1,114 @@
+﻿body {
+    background: url('~/files/imgs/image.png') no-repeat center center;
+    background-size: cover;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+}
+
+.container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 500px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    border: 1px solid rgba(241, 241, 241, 0.5);
+    padding: 20px 30px;
+    backdrop-filter: blur(6px);
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    color: #fff;
+}
+
+.wrapper {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    width: 450px;
+    height: 450px;
+    text-align: center;
+    border: 1px solid rgb(241, 241, 241);
+    border-radius: 12px;
+    padding: 10px 20px;
+    background: transparent;
+    backdrop-filter: blur(6px);
+    box-shadow: 5px 5px 10px 0 rgba(0, 0, 0, 0.5);
+}
+
+    .wrapper h2 {
+        font-size: 30px;
+        color: #fffefe;
+    }
+
+
+h2 {
+    font-size: 30px;
+    color: #ffffff;
+    margin-bottom: 20px;
+}
+
+form input[type="text"],
+form input[type="email"],
+form input[type="password"],
+form input[type="checkbox"] {
+    width: 90%;
+    padding: 10px 15px;
+    margin: 10px 0;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgb(241, 241, 241);
+    color: #ffffff;
+    font-size: 16px;
+    outline: none;
+}
+
+form input::placeholder {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+form input:focus {
+    border-color: #ffffff;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+form input[type="checkbox"] {
+    width: auto;
+    height: auto;
+    display: inline-block;
+    margin-right: 10px;
+}
+
+form input[type="submit"] {
+    width: 100%;
+    padding: 10px 0;
+    margin-top: 15px;
+    border: none;
+    border-radius: 25px;
+    background: #ffffff;
+    color: #000000;
+    font-size: 16px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+    form input[type="submit"]:hover {
+        background: #f0f0f0;
+    }
+
+p {
+    color: rgba(255, 255, 255, 0.8);
+    margin-top: 20px;
+}
+
+a.login {
+    text-decoration: none;
+    color: #000000;
+}
+
+    a.login:hover {
+        text-decoration: underline;
+        color: chartreuse;
+    }

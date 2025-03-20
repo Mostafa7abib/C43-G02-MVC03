@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using IKEA.BLL.Models.Departments;
+using IKEA.BLL.Models.Employees;
 using IKEA.PL.Models.Departments;
+using IKEA.PL.Models.Employees;
 
 namespace IKEA.PL.Mapping
 {
@@ -9,7 +11,9 @@ namespace IKEA.PL.Mapping
         public MappingProfile() 
         {
             #region Employee
-
+            CreateMap<EmployeeDetailsDto, EmployeeEditVM>().ReverseMap();
+            CreateMap<EmployeeEditVM, UpdatedEmployeeDto>().ReverseMap();
+            CreateMap<CreatedEmployeeDto, EmployeeEditVM>().ReverseMap();
             #endregion
 
             #region Department

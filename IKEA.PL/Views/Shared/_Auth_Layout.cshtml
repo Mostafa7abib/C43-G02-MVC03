@@ -1,0 +1,25 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+	@if (ViewData["Title"]== "Register")
+	{
+		<link href="~/css/AuthLayout.css" rel="stylesheet" type="text/css" media="all" />
+	}
+	else
+	{
+		<link href="~/css/LoginAuth.css" rel="stylesheet" type="text/css" media="all" />
+	})
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel="stylesheet">
+    <title>@ViewData["Title"]</title>
+</head>
+
+<body>
+	@RenderBody();
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("ValidationScript", required: true)
+</body>
+</html>

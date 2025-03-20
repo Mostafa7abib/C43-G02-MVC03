@@ -1,10 +1,11 @@
 ﻿using IKEA.DAL.Common.Enums;
 using System.ComponentModel.DataAnnotations;
 
-namespace IKEA.PL.Models.Departments
+namespace IKEA.PL.Models.Employees
 {
     public class EmployeeEditVM
     {
+        public int Id { get; set; }
         [MaxLength(50, ErrorMessage = "Max Length Of Name Is 50 Chars")]
         [MinLength(5, ErrorMessage = "Min Length Of Name Is 5 Chars")]
         public string Name { get; set; } = null!;
@@ -27,5 +28,6 @@ namespace IKEA.PL.Models.Departments
         public EmployeeType EmployeeType { get; set; }
         [Display(Name = "Department")]
         public int? DepartmentId { get; set; }
+        public IFormFile? Image { get; set; }
     }
 }
